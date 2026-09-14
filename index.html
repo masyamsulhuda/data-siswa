@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Data Siswa</title>
+    
+    <!-- Bootstrap 5 & Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --bs-body-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            --brand-color: #0d6efd; /* Warna asli Bootstrap 5 Primary */
+            --brand-hover: #0b5ed7; /* Warna asli Bootstrap 5 Primary Hover */
+            --bg-light: #f8f9fa;    /* Warna asli Bootstrap 5 Light Background */
+        }
+
+        * { box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-light); 
+            color: #212529;
+            font-family: var(--bs-body-font-family);
+        }
+
+        /* Navbar & Header */
+        .top-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            z-index: 1030;
+        }
+        .brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.4rem;
+            height: 2.4rem;
+            background: linear-gradient(135deg, var(--brand-color), #0dcaf0);
+            color: #ffffff;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 12px rgba(13, 110, 253, 0.18);
+            flex-shrink: 0;
+        }
+        .top-header .header-title-group h6 {
+            font-size: 0.98rem;
+            letter-spacing: 0.01em;
+        }
+        .top-header .header-actions .btn {
+            padding: 0.55rem 0.95rem;
+            font-size: 0.9rem;
+        }
+        .top-header .header-actions .btn .bi {
+            font-size: 1rem;
+            margin-top: -1px;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        /* Custom Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            gap: 1rem;
+            background-color: #ffffff;
+        }
+        .top-header .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            margin-left: auto;
+            flex-wrap: nowrap;
+        }
+        .top-header .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-height: 40px;
+            flex-wrap: wrap;
+        }
+        .top-header .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+            flex: 1;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+        .top-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            z-index: 10;
+            font-weight: 600;
+            padding: 0.5rem 0.7rem;
+            margin-bottom: -2px;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.9rem;
+        }
+        .nav-tabs .nav-link:hover {
+            color: var(--brand-color);
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--brand-color);
+            border-bottom: 2px solid var(--brand-color);
+            background: transparent;
+        }
+
+        /* Table Styling (SaaS Look) */
+        .table-responsive { 
+            max-height: 65vh; 
+            overflow-y: auto; 
+            border: 1px solid #dee2e6;
+        }
+        .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-responsive::-webkit-scrollbar-track { background: #f8f9fa; }
+        .table-responsive::-webkit-scrollbar-thumb { background: #dee2e6; }
+        .table-responsive::-webkit-scrollbar-thumb:hover { background: #6c757d; }
+
+        .table { margin-bottom: 0; }
+        .table thead th { 
+            position: sticky; 
+            top: 0; 
+            background-color: #f8f9fa; 
+            color: #495057; 
+            z-index: 1; 
+            white-space: nowrap; 
+            text-align: center !important;
+            vertical-align: middle;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            padding: 1rem;
+        }
+        .table tbody td { 
+            white-space: nowrap; 
+            vertical-align: middle;
+            font-size: 0.875rem;
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .table-hover tbody tr:hover { background-color: #f8f9fa; }
+        .table-row-clickable { cursor: pointer; }
+
+        /* Search Bar */
+        .search-wrapper { position: relative; }
+        .search-wrapper .bi-search {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+        }
+        .search-wrapper .form-control {
+            padding-left: 2.5rem;
+            border: 1px solid #dee2e6;
+            box-shadow: none;
+        }
+        .search-wrapper .form-control:focus {
+            border-color: var(--brand-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Form Inputs */
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.3rem;
+        }
+        .form-control, .form-select, .input-group, .form-check.form-switch {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            padding: 0.5rem 0.75rem;
+            display: block;
+        }
+        .input-group .form-control {
+            flex: 1 1 auto;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--brand-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .required-field::after { content: " *"; color: #dc3545; }
+
+        .icon-circle {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        #studentForm {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        #formFieldsContainer .row {
+            width: 100%;
+            margin: 0;
+        }
+
+        .form-check.form-switch {
+            width: auto;
+        }
+
+        .category-card {
+            background-color: #f7f7f8;
+        }
+
+        .category-card .card-header {
+            background-color: #f7f7f8;
+        }
+
+        /* Buttons */
+        .btn {
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background-color: var(--brand-color);
+            border-color: var(--brand-color);
+        }
+        .btn-primary:hover {
+            background-color: var(--brand-hover);
+            border-color: var(--brand-hover);
+            transform: translateY(-1px);
+        }
+
+        .badge-soft {
+            padding: 0.35em 0.8em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<header class="top-header sticky-top">
+    <div class="container-fluid px-4 py-2 header-row">
+        <div class="header-title-group">
+            <i class="bi bi-collection-fill brand-icon py-4"></i>
+            <div>
+                <h6 class="mb-0 fw-bold text-dark">Sistem Informasi Data Siswa</h6>
+                <small class="text-muted">Kelola data siswa di Google Spreadsheet.</small>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-light border shadow-sm text-secondary py-1 px-2" onclick="loadData()" title="Muat Ulang Data">
+                <i class="bi bi-arrow-repeat me-2"></i> Sinkronisasi
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid px-3 pb-3 pt-3">
+    <div id="alertArea"></div>
+
+    <div class="card bg-white p-3">
+        <div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="search-wrapper w-25 min-w-250px">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari NIS atau Nama..." onkeyup="filterTable()">
+                </div>
+                <button class="btn btn-primary shadow-sm" onclick="openCreateForm()">
+                    <i class="bi bi-plus-lg me-2"></i> Tambah Data Baru
+                </button>
+            </div>
+            
+            <div id="loadingIndicator" class="text-center d-none py-5">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Memuat...</span>
+                </div>
+                <h6 class="text-secondary fw-semibold">Sinkronisasi Data...</h6>
+                <p class="text-muted small">Mengambil informasi terbaru dari Spreadsheet</p>
+            </div>
+
+            <div class="table-responsive shadow-sm">
+                <table class="table table-hover table-sm align-middle" id="dataTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="11" class="text-center text-muted py-5"><i class="bi bi-box-seam fs-2 mb-3 text-light"></i><br>Silakan sinkronisasi data terlebih dahulu.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FULLSCREEN MODAL FORM -->
+<div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-white py-3 px-4">
+                <div class="d-flex flex-nowrap align-items-center gap-3">
+                    <h5 class="modal-title fw-bold mb-0" id="studentModalLabel">Form Pendaftaran Siswa Baru</h5>
+                    <span id="studentNameTitle" class="h5 fw-bold text-primary mb-0"></span>
+                    <div id="studentIdentityTitle" class="d-flex align-items-center gap-2"></div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm" class="row g-4 mx-0 w-100" onsubmit="submitForm(event)">
+                    <input type="hidden" id="formAction" value="create">
+                    <div class="col-12" id="dynamicFormArea">
+                        <div class="row g-4 w-100" id="formFieldsContainer"></div>
+                    </div>
+                    <div class="col-12 mt-3 pt-3 border-top text-end bg-light p-3 mx-0 w-100">
+                        <button type="button" class="btn btn-outline-secondary me-2 px-4" onclick="resetForm()">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Kosongkan
+                        </button>
+                        <button type="submit" class="btn btn-primary px-5 shadow-sm" id="btnSubmit">
+                            <i class="bi bi-floppy me-1"></i> Simpan Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- KONFIGURASI ENDPOINT ---
+    // URL Apps Script TIDAK lagi ditulis di sini. Browser hanya memanggil
+    // /api/students di server Vercel kita sendiri; server itulah yang
+    // menyimpan dan memanggil URL Apps Script yang sebenarnya (lihat api/students.js).
+    const SCRIPT_ENDPOINT = '/api/students';
+
+    const HEADERS = [
+        "Rombel", "Abs", "NIS", "Nama Lengkap", "JK", "EMIS", "KIP", "KK", "Akte", "Ijazah",
+        "Tinggal Bersama", "No. HP", "E-mail", "Tempat Lahir", "Tanggal Lahir",
+        "Alamat", "RT", "RW", "Desa", "Kecamatan", "Kab./Kota", "Provinsi", "NISN", "NSM MTs",
+        "NPSN", "Sekolah Asal", "Status Anak", "Anak Ke", "Jml Saudara", "Copy Akta Kelahiran",
+        "NIK Siswa", "Copy ijazah MTs/SMP", "Copy KK", "Nomor KK", "Yatim", "Ayah", "NIK Ayah",
+        "Pendidikan Ayah", "Pekerjaan Ayah", "Piatu", "Ibu", "NIK Ibu", "Pendidikan Ibu",
+        "Pekerjaan Ibu", "Saudara di MAS", "No KKS", "No PKH", "No KIP", "Tahun Lulus",
+        "Blanko Ijazah", "No Pst SMP-MTs", "No. SKHUN", "Nilai UN", "NIS LOKAL", "Verval PD"
+    ];
+
+    const TABLE_HEADERS = ["Rombel", "Abs", "NIS", "Nama Lengkap", "JK", "NISN", "NIK Siswa", "No KIP"];
+
+    const TABLE_HEADER_LABELS = {
+        "Rombel": 'Rombel',
+        "Abs": 'Abs',
+        "NIS": 'NIS',
+        "Nama Lengkap": 'Nama Lengkap',
+        "JK": 'JK',
+        "NISN": 'NISN',
+        "NIK Siswa": 'NIK Siswa',
+        "No KIP": 'No KIP'
+    };
+
+    const FORM_CATEGORIES = [
+        { title: "Informasi Utama & Akademik", icon: "bi-mortarboard-fill", colorClass: "primary", fields: ["Rombel", "Abs", "NIS", "NISN", "Nama Lengkap", "JK", "NIS LOKAL", "Status Anak", "Anak Ke", "Jml Saudara"] },
+        { title: "Data Pribadi Siswa", icon: "bi-person-circle", colorClass: "success", fields: ["NIK Siswa", "Tempat Lahir", "Tanggal Lahir", "Tinggal Bersama", "No. HP", "E-mail"] },
+        { title: "Alamat Tempat Tinggal", icon: "bi-geo-alt-fill", colorClass: "info", fields: ["Alamat", "RT", "RW", "Desa", "Kecamatan", "Kab./Kota", "Provinsi"] },
+        { title: "Data Keluarga & Orang Tua", icon: "bi-people-fill", colorClass: "warning", fields: ["Ayah", "Yatim", "NIK Ayah", "Pendidikan Ayah", "Pekerjaan Ayah", "Nomor KK", "No. HP Ortu", "Saudara di MAS", "Ibu", "Piatu", "NIK Ibu", "Pendidikan Ibu", "Pekerjaan Ibu"] },
+        { title: "Pendidikan Sebelumnya & Dokumen", icon: "bi-file-earmark-text-fill", colorClass: "secondary", fields: ["Sekolah Asal", "NPSN", "NSM MTs", "Copy Akta Kelahiran", "Copy ijazah MTs/SMP", "Copy KK"] },
+        { title: "Bantuan Sosial & Status Sistem", icon: "bi-shield-fill", colorClass: "success", fields: ["EMIS", "Verval PD", "No KIP", "No PKH"] }
+    ];
+
+    let globalData = []; 
+
+    document.addEventListener("DOMContentLoaded", () => {
+        buildTableHeaders();
+        buildFormFields();
+        loadData(); 
+    });
+
+    function buildTableHeaders() {
+        const thead = document.getElementById('tableHead');
+        let html = '<tr><th style="width: 5%;" class="text-center">No</th>'; 
+        TABLE_HEADERS.forEach(header => { html += `<th>${TABLE_HEADER_LABELS[header] || header}</th>`; });
+        html += '</tr>';
+        thead.innerHTML = html;
+    }
+
+    function buildFormFields() {
+        const container = document.getElementById('formFieldsContainer');
+        let html = '';
+        FORM_CATEGORIES.forEach(category => {
+            html += `
+                <div class="col-lg-6 mb-2">
+                    <div class="card border border-light shadow-sm bg-light category-card">
+                        <div class="card-header bg-light border-0 pt-4 pb-2 d-flex align-items-center">
+                            <div class="icon-circle bg-${category.colorClass} bg-opacity-10 text-${category.colorClass}">
+                                <i class="${category.icon}"></i>
+                            </div>
+                            <h6 class="mb-0 fw-bold text-dark">${category.title}</h6>
+                        </div>
+                        <div class="card-body pt-2 pb-4"><div class="row g-3">
+            `;
+            category.fields.forEach(header => {
+                let inputType = "text";
+                if (header === "Tanggal Lahir") inputType = "date";
+                if (header === "E-mail") inputType = "email";
+                if (header === "No. HP") inputType = "tel";
+                
+                let colSize = "col-md-6";
+                if (["Nama Lengkap", "Alamat", "Sekolah Asal"].includes(header) || header.toLowerCase().startsWith("copy")) colSize = "col-md-12";
+                
+                let isRequired = ["NIS", "Nama Lengkap"].includes(header) ? "required" : "";
+                let labelClass = isRequired ? "form-label required-field" : "form-label text-muted small";
+                let inputId = `input_${header.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                
+                let inputHtml = '';
+                
+                const checkboxFields = ["EMIS", "KIP", "KK", "Akte", "Ijazah", "Yatim", "Piatu", "Verval PD"];
+                
+                if (checkboxFields.includes(header)) {
+                    inputHtml = `
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" role="switch" id="${inputId}" name="${header}">
+                        <label class="form-check-label text-muted small" for="${inputId}">Ya</label>
+                    </div>`;
+                } else if (header === "JK") {
+                    inputHtml = `<select class="form-select form-select-sm" id="${inputId}" name="${header}">
+                        <option value="">-- Pilih JK --</option><option value="L">L (Laki-laki)</option><option value="P">P (Perempuan)</option></select>`;
+                } else if (header.toLowerCase().startsWith("copy")) {
+                    inputHtml = `
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light text-secondary border-end-0"><i class="bi bi-cloud-arrow-up text-success"></i></span>
+                        <input type="url" class="form-control form-control-sm border-start-0" id="${inputId}" name="${header}" placeholder="https://drive.google.com/...">
+                    </div>`;
+                } else {
+                    inputHtml = `<input type="${inputType}" class="form-control form-control-sm" id="${inputId}" name="${header}" ${isRequired} ${header === "Alamat" ? 'placeholder="Nama jalan, dukuh, dusun..."' : ''}>`;
+                }
+                
+                html += `<div class="${colSize}"><label class="${labelClass}" for="${inputId}">${header}</label>${inputHtml}</div>`;
+            });
+            html += `</div></div></div></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderTable(dataArray) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        
+        if (!dataArray || dataArray.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${TABLE_HEADERS.length + 2}" class="text-center text-muted py-5"><i class="bi bi-folder2-open fs-2 mb-3 text-light"></i><br>Tidak ada data ditemukan.</td></tr>`;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        dataArray.forEach((row, index) => {
+            const tr = document.createElement('tr');
+            tr.className = 'table-row-clickable';
+            tr.addEventListener('click', () => openEditForm(row['NIS']));
+            
+            const tdNo = document.createElement('td');
+            tdNo.className = 'text-center text-muted';
+            tdNo.textContent = index + 1;
+            tr.appendChild(tdNo);
+
+            TABLE_HEADERS.forEach(header => {
+                const td = document.createElement('td');
+                const rawValue = (row[header] !== undefined && row[header] !== null) ? row[header] : '';
+                if (header === 'JK' && (rawValue === 'L' || rawValue === 'Laki-laki')) {
+                    td.innerHTML = '<span class="badge badge-soft bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">L</span>';
+                } else if (header === 'JK' && (rawValue === 'P' || rawValue === 'Perempuan')) {
+                    td.innerHTML = '<span class="badge badge-soft bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">P</span>';
+                } else if (header === 'Nama Lengkap') {
+                    td.innerHTML = `<span class="fw-semibold text-dark">${rawValue}</span>`;
+                } else {
+                    td.textContent = rawValue;
+                }
+                tr.appendChild(td);
+            });
+            fragment.appendChild(tr);
+        });
+        tbody.appendChild(fragment);
+    }
+
+    function showAlert(message, type = 'info') {
+        const alertArea = document.getElementById('alertArea');
+        alertArea.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle')} fs-5 me-3"></i>
+                <div>${message}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>`;
+        setTimeout(() => { alertArea.innerHTML = ''; }, 6000);
+    }
+
+    async function loadData() {
+        const loader = document.getElementById('loadingIndicator');
+        document.getElementById('tableBody').innerHTML = '';
+        loader.classList.remove('d-none');
+
+        try {
+            const response = await fetch(SCRIPT_ENDPOINT);
+            const result = await response.json();
+            
+            if (result.success) {
+                globalData = result.data || [];
+                renderTable(globalData);
+                showAlert(`Berhasil memuat ${globalData.length} entri siswa.`, "success");
+            } else {
+                showAlert(`Gagal memuat data: ${result.message}`, "danger");
+            }
+        } catch (error) {
+            showAlert(`Kesalahan jaringan: Gagal menghubungi server. Pastikan Apps Script sudah di-deploy.`, "danger");
+        } finally {
+            loader.classList.add('d-none');
+        }
+    }
+
+    function filterTable() {
+        const searchVal = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = globalData.filter(item => {
+            return String(item['NIS'] || '').toLowerCase().includes(searchVal) ||
+                   String(item['Nama Lengkap'] || '').toLowerCase().includes(searchVal);
+        });
+        renderTable(filtered);
+    }
+
+    function openCreateForm() {
+        resetForm();
+        document.getElementById('formAction').value = 'create';
+        document.getElementById('studentModalLabel').innerText = 'Form Pendaftaran Siswa Baru';
+        document.getElementById('studentNameTitle').innerText = '';
+        document.getElementById('studentIdentityTitle').innerText = '';
+        const nisInput = document.getElementById('input_NIS');
+        if (nisInput) nisInput.readOnly = false;
+
+        const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
+        studentModal.show();
+    }
+
+    function renderIdentityCopyBadges(nisn, nik) {
+        const container = document.getElementById('studentIdentityTitle');
+        container.innerHTML = '';
+        const items = [
+            { label: 'NISN', value: nisn },
+            { label: 'NIK', value: nik }
+        ];
+        items.forEach(item => {
+            const val = item.value ? String(item.value).trim() : '';
+            if (!val) return;
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-light text-dark border d-flex align-items-center gap-1 identity-copy-badge';
+            badge.style.cursor = 'pointer';
+            badge.title = 'Klik untuk menyalin ' + item.label;
+            badge.innerHTML = `<i class="bi bi-clipboard"></i> ${item.label}: ${val}`;
+            badge.addEventListener('click', () => copyToClipboard(val, badge, item.label));
+            container.appendChild(badge);
+        });
+    }
+
+    function copyToClipboard(text, badgeEl, label) {
+        const done = () => {
+            const original = badgeEl.innerHTML;
+            badgeEl.innerHTML = `<i class="bi bi-clipboard-check"></i> Tersalin!`;
+            badgeEl.classList.add('bg-success-subtle', 'text-success');
+            setTimeout(() => {
+                badgeEl.innerHTML = original;
+                badgeEl.classList.remove('bg-success-subtle', 'text-success');
+            }, 1200);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        } else {
+            fallbackCopy(text, done);
+        }
+    }
+
+    function fallbackCopy(text, cb) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+        document.body.removeChild(ta);
+        cb();
+    }
+
+    function openEditForm(nis) {
+        const student = globalData.find(s => String(s.NIS) === String(nis));
+        if (!student) return showAlert("Data siswa tidak ditemukan.", "danger");
+
+        resetForm();
+        document.getElementById('formAction').value = 'update';
+        document.getElementById('studentModalLabel').innerText = 'Edit Data Siswa';
+        document.getElementById('studentNameTitle').innerText = student['Nama Lengkap'] || '';
+        renderIdentityCopyBadges(student['NISN'], student['NIK Siswa']);
+
+        HEADERS.forEach(header => {
+            const inputEl = document.getElementById(`input_${header.replace(/[^a-zA-Z0-9]/g, '_')}`);
+            if (inputEl && student[header] !== undefined) {
+                if (inputEl.type === 'checkbox') {
+                    const val = String(student[header]).toLowerCase().trim();
+                    inputEl.checked = ['ya', 'ada', 'true', '1', 'v', 'yes'].includes(val);
+                } else {
+                    inputEl.value = student[header];
+                }
+            }
+        });
+
+        const nisInput = document.getElementById('input_NIS');
+        if (nisInput) nisInput.readOnly = true;
+
+        const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
+        studentModal.show();
+    }
+
+    function resetForm() {
+        document.getElementById('studentForm').reset();
+        const nisInput = document.getElementById('input_NIS');
+        if (nisInput) nisInput.readOnly = false;
+        document.getElementById('studentModalLabel').innerText = 'Form Pendaftaran Siswa Baru';
+        document.getElementById('studentNameTitle').innerText = '';
+        document.getElementById('studentIdentityTitle').innerText = '';
+    }
+
+    async function submitForm(e) {
+        e.preventDefault();
+        const action = document.getElementById('formAction').value;
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        const studentData = {};
+        HEADERS.forEach(header => {
+            const inputEl = document.getElementById(`input_${header.replace(/[^a-zA-Z0-9]/g, '_')}`);
+            if (inputEl) {
+                if (inputEl.type === 'checkbox') {
+                    studentData[header] = inputEl.checked ? 'TRUE' : 'FALSE';
+                } else {
+                    studentData[header] = inputEl.value;
+                }
+            }
+        });
+
+        if (!studentData['NIS']) return showAlert("NIS wajib diisi!", "warning");
+
+        const payload = { action: action, data: studentData };
+        if (action === 'update') payload.nis = studentData['NIS'];
+
+        const originalBtnText = btnSubmit.innerHTML;
+        btnSubmit.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span> Memproses...`;
+        btnSubmit.disabled = true;
+
+        try {
+            const response = await fetch(SCRIPT_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert(`Selesai: ${result.message}`, "success");
+                loadData();
+
+                const modalEl = document.getElementById('studentModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            } else {
+                showAlert(`Gagal: ${result.message}`, "danger");
+            }
+        } catch (error) {
+            showAlert(`Gagal menyimpan data: ${error.message}`, "danger");
+        } finally {
+            btnSubmit.innerHTML = originalBtnText;
+            btnSubmit.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
